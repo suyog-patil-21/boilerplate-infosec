@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const helmet = require("helmet");
 
+
+/*
 app.use(helmet.hidePoweredBy());
 app.use(helmet.frameguard({action: 'deny'}));
 app.use(helmet.xssFilter());
@@ -21,7 +23,34 @@ app.use(helmet.contentSecurityPolicy(
     scriptSrc: ["'self'", 'trusted-cdn.com']
   }}
 ))
+*/
 
+// instead of using single we can use like bellow
+
+app.use(helmet(
+  {
+    frameguard: {         // configure
+      action: 'deny'
+    },
+    contentSecurityPolicy: {    // enable and configure
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ['style.com'],
+      }
+    },
+    dnsPrefetchControl: false     // disable
+  }
+));
+
+// noCache & contentSecurityPolicy is not include in helmet() so redifining under
+app.use(helmet.noCache())
+
+app.use(helmet.contentSecurityPolicy(
+  {directives:{
+    defaultSrc:["'self'"],
+    scriptSrc: ["'self'", 'trusted-cdn.com']
+  }}
+))
 
 
 
